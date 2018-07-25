@@ -1,6 +1,5 @@
 package client;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -37,16 +36,17 @@ public class CLClient implements Runnable {
                 if (!input.equals("Q")) {
                     try {
                         board.makeMove(input, symbols.get(i));
-                        int[][] eval = player.fullEvaluate(symbols.get(i));
+                        int[][] eval = player.mapEvaluate(symbols.get(i));
 
                         board.printBoardWithEval(eval);
-
+                        System.out.println(Arrays.toString(player.fullEvaluate(symbols.get(i))));
 //                        for(int j = 0; j<board.size; j++){
 //                            System.out.println(Arrays.toString(board.board[j]));
 //                        }
 //                        for(int j = 0; j<board.size; j++){
 //                            System.out.println(Arrays.toString(eval[j]));
-//                        }
+//
+//}
 
                         if(board.checkWin(symbols.get(i))){
                             System.out.println("Player "+ (i + 1) +" Wins!");

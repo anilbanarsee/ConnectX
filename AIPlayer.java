@@ -12,8 +12,67 @@ public class AIPlayer{
     AIPlayer(Board board){
         this.board = board;
     }
+    int[] fullEvaluate(Symbol s){
+        int[] eval = new int[board.win];
 
-    int[][] fullEvaluate(Symbol s){
+        for(int i=0; i<board.size; i++){
+            for(int j = 0; j<board.size; j++) {
+                //populate horizontally
+                if(i+board.win <= board.size) {
+                    Symbol[] segment = new Symbol[board.win];
+                    for (int n = 0; n < board.win; n++) {
+                        segment[n] = board.board[i+n][j];
+                    }
+                    int value = evaluateSegment(segment, s);
+                    if(value>0){
+                        eval[value-1]++;
+                    }
+                }
+                //populate vertically
+                if(j+board.win <= board.size) {
+                    Symbol[] segment = new Symbol[board.win];
+                    System.arraycopy(board.board[i], j + 0, segment, 0, board.win);
+
+                    int value = evaluateSegment(segment, s);
+                    if(value>0){
+                        eval[value-1]++;
+                    }
+                }
+                //populate diagonally right
+                if(j+board.win <= board.size && i+board.win <= board.size){
+                    Symbol[] segment = new Symbol[board.win];
+                    for (int n = 0; n<board.win; n++){
+                        segment[n] = board.board[i+n][j+n];
+                        int value = evaluateSegment(segment, s);
+                        if(value>0){
+                            eval[value-1]++;
+                        }
+                    }
+                }
+                //populate diagonally left
+                if(j+board.win <= board.size && i-board.win >= -1){
+                    Symbol[] segment = new Symbol[board.win];
+                    for (int n = 0; n<board.win; n++){
+                        segment[n] = board.board[i-n][j+n];
+                        int value = evaluateSegment(segment, s);
+                        if(value>0){
+                            eval[value-1]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int i=0; i<board.win; i++){
+            if(eval[i]>1 && i!=(board.win-1)){
+                eval[i+1]++;
+                eval[i] -= 2;
+            }
+        }
+
+        return eval;
+    }
+    int[][] mapEvaluate(Symbol s){
 
         int[][] eval = new int[board.size][board.size];
         for(int i=0; i<board.size; i++){
@@ -91,6 +150,26 @@ public class AIPlayer{
             y += step_y;
         }
 
+    }
+    private int evaluateSegment(Symbol[] segment, Symbol s){
+        boolean enemy_symb = false;
+        int free_space = 0;
+        int good_symbs = 0;
+        for (Symbol aSegment : segment) {
+            if (aSegment == null) {
+                free_space += 1;
+            } else if (!aSegment.equals(s)) {
+                enemy_symb = true;
+                break;
+            } else {
+                good_symbs += 1;
+            }
+        }
+        if(good_symbs+free_space<board.win || enemy_symb){
+            return 0;
+        }
+        System.out.println(board.win+", "+free_space);
+        return board.win-free_space;
     }
     private int evaluateSegment(Symbol[] segment, Symbol s, int[][] eval){
         boolean enemy_symb = false;
