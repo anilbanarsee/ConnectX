@@ -1,13 +1,11 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AIPlayer{
     private Board board;
-    static final int HORIZONTAL = 0;
-    static final int VERTICAL = 1;
-    static final int DIAG_R = 2;
-    static final int DIAG_L = 3;
 
     AIPlayer(Board board){
         this.board = board;
@@ -71,6 +69,55 @@ public class AIPlayer{
         }
 
         return eval;
+    }
+    int[] blockEvaluate(Symbol s){
+        ArrayList<BlockValue> blocks = new ArrayList<BlockValue>();
+
+        for(int i=0; i<board.size; i++){
+            for(int j = 0; j<board.size; j++) {
+                //populate horizontally
+                if(i+board.win <= board.size) {
+                    Symbol[] segment = new Symbol[board.win];
+                    Coord[] squares = new Coord[board.win];
+                    for (int n = 0; n < board.win; n++) {
+                        segment[n] = board.board[i+n][j];
+                        squares[i] = new Coord(i+n, j);
+                    }
+                    blocks.add(createValueBlock(segment, squares, s));
+                }
+                //populate vertically
+                if(j+board.win <= board.size) {
+                    Symbol[] segment = new Symbol[board.win];
+                    Coord[] squares = new Coord[board.win];
+                    for (int n = 0; n < board.win; n++) {
+                        segment[n] = board.board[i][j+n];
+                        squares[i] = new Coord(i, j+n);
+                    }
+                    blocks.add(createValueBlock(segment, squares, s));
+                }
+                //populate diagonally right
+                if(j+board.win <= board.size && i+board.win <= board.size){
+                    Symbol[] segment = new Symbol[board.win];
+                    Coord[] squares = new Coord[board.win];
+                    for (int n = 0; n<board.win; n++){
+                        segment[n] = board.board[i+n][j+n];
+                        squares[i] = new Coord(i+n, j+n);
+                    }
+                    blocks.add(createValueBlock(segment, squares, s));
+                }
+                //populate diagonally left
+                if(j+board.win <= board.size && i-board.win >= -1){
+                    Symbol[] segment = new Symbol[board.win];
+                    Coord[] squares = new Coord[board.win];
+                    for (int n = 0; n<board.win; n++){
+                        segment[n] = board.board[i-n][j+n];
+                        squares[i] = new Coord(i-n, j+n);
+                    }
+                    blocks.add(createValueBlock(segment, squares, s));
+                }
+            }
+        }
+        return null;
     }
     int[][] mapEvaluate(Symbol s){
 
@@ -151,6 +198,30 @@ public class AIPlayer{
         }
 
     }
+    private BlockValue createValueBlock(Symbol[] segment, Coord[] squares, Symbol s){
+        boolean enemy_symb = false;
+        int free_space = 0;
+        int good_symbs = 0;
+
+        for (int i =0; i<segment.length; i++) {
+
+            Symbol aSegment = segment[i];
+
+            if (aSegment == null) {
+                free_space += 1;
+            } else if (!aSegment.equals(s)) {
+                enemy_symb = true;
+                break;
+            } else {
+                good_symbs += 1;
+            }
+        }
+        if(good_symbs+free_space<board.win || enemy_symb){
+            return new BlockValue(new Coord[0], 0);
+        }
+        System.out.println(board.win+", "+free_space);
+        return new BlockValue(squares, board.win-free_space);
+    }
     private int evaluateSegment(Symbol[] segment, Symbol s){
         boolean enemy_symb = false;
         int free_space = 0;
@@ -190,5 +261,35 @@ public class AIPlayer{
         }
         System.out.println(board.win+", "+free_space);
         return board.win-free_space;
+    }
+    private class BlockMap{
+
+        List<BlockValue>[][] grid;
+
+        private BlockMap(int size){
+            //grid = new List<BlockValue>[size][size];
+            //todo
+        }
+
+        void addBlock(BlockValue block){
+
+        }
+
+    }
+    private class BlockValue{
+        Coord[] square;
+        int value;
+        private BlockValue(Coord[] squares, int value){
+            this.square = squares;
+            this.value = value;
+        }
+    }
+    private class Coord{
+        int x, y;
+
+        private Coord(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
     }
 }

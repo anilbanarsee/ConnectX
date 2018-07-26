@@ -1,7 +1,6 @@
 package client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class CLClient implements Runnable {
@@ -39,7 +38,7 @@ public class CLClient implements Runnable {
                         int[][] eval = player.mapEvaluate(symbols.get(i));
 
                         board.printBoardWithEval(eval);
-                        System.out.println(Arrays.toString(player.fullEvaluate(symbols.get(i))));
+                        player.fullEvaluate(symbols.get(i));
 //                        for(int j = 0; j<board.size; j++){
 //                            System.out.println(Arrays.toString(board.board[j]));
 //                        }
