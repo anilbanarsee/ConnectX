@@ -2,6 +2,7 @@ package client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class AIPlayer{
@@ -264,24 +265,54 @@ public class AIPlayer{
     }
     private class BlockMap{
 
-        List<BlockValue>[][] grid;
+        HashMap<Integer, HashMap<Integer, List<BlockValue>>> map;
 
         private BlockMap(int size){
-            //grid = new List<BlockValue>[size][size];
-            //todo
+            map = new HashMap<>();
+            for(int i=0; i<size; i++){
+                map.put(i, new HashMap<>());
+            }
         }
 
         void addBlock(BlockValue block){
 
+            for(Coord c: block.squares){
+                List<BlockValue> list = map.get(c.x).get(c.y);
+                boolean subset = false;
+                for(BlockValue b: list){
+
+                }
+                boolean linked = false;
+            }
         }
 
+        boolean checkSubset(BlockValue block){
+            for(Coord c: block.squares){
+                List<BlockValue> list = map.get(c.x).get(c.y);
+                for(BlockValue b: list){
+
+                }
+            }
+        }
     }
     private class BlockValue{
-        Coord[] square;
+        Coord square;
         int value;
-        private BlockValue(Coord[] squares, int value){
-            this.square = squares;
-            this.value = value;
+        BlockValue next;
+        BlockValue prev;
+
+        private BlockValue(Coord square, int value, BlockValue next, BlockValue prev){
+
+        }
+
+        BlockValue createChain(Coord[] squares, int value){
+
+        }
+        BlockValue createChainR(Coord[] squares, int value, int index){
+            if(index>=squares.length){
+                return null;
+            }
+            return new BlockValue(squares[index], value, this, createChainR(squares, value, index+1));
         }
     }
     private class Coord{
