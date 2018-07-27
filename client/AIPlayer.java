@@ -295,32 +295,4 @@ public class AIPlayer{
             }
         }
     }
-    private class BlockValue{
-        Coord square;
-        int value;
-        BlockValue next;
-        BlockValue prev;
-
-        private BlockValue(Coord square, int value, BlockValue next, BlockValue prev){
-
-        }
-
-        BlockValue createChain(Coord[] squares, int value){
-
-        }
-        BlockValue createChainR(Coord[] squares, int value, int index){
-            if(index>=squares.length){
-                return null;
-            }
-            return new BlockValue(squares[index], value, this, createChainR(squares, value, index+1));
-        }
-    }
-    private class Coord{
-        int x, y;
-
-        private Coord(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-    }
 }
