@@ -61,18 +61,11 @@ public class AIPlayer{
                 }
             }
         }
-
-        for(int i=0; i<board.win; i++){
-            if(eval[i]>1 && i!=(board.win-1)){
-                eval[i+1]++;
-                eval[i] -= 2;
-            }
-        }
-
         return eval;
     }
     int[] blockEvaluate(Symbol s){
-        ArrayList<BlockValue> blocks = new ArrayList<BlockValue>();
+
+        BlockMap bmap = new BlockMap(board.size, board.win);
 
         for(int i=0; i<board.size; i++){
             for(int j = 0; j<board.size; j++) {
@@ -84,7 +77,7 @@ public class AIPlayer{
                         segment[n] = board.board[i+n][j];
                         squares[i] = new Coord(i+n, j);
                     }
-                    blocks.add(createValueBlock(segment, squares, s));
+                    bmap.addBlock(createValueBlock(segment, squares, s));
                 }
                 //populate vertically
                 if(j+board.win <= board.size) {
@@ -94,7 +87,7 @@ public class AIPlayer{
                         segment[n] = board.board[i][j+n];
                         squares[i] = new Coord(i, j+n);
                     }
-                    blocks.add(createValueBlock(segment, squares, s));
+                    bmap.addBlock(createValueBlock(segment, squares, s));
                 }
                 //populate diagonally right
                 if(j+board.win <= board.size && i+board.win <= board.size){
@@ -104,7 +97,7 @@ public class AIPlayer{
                         segment[n] = board.board[i+n][j+n];
                         squares[i] = new Coord(i+n, j+n);
                     }
-                    blocks.add(createValueBlock(segment, squares, s));
+                    bmap.addBlock(createValueBlock(segment, squares, s));
                 }
                 //populate diagonally left
                 if(j+board.win <= board.size && i-board.win >= -1){
@@ -114,7 +107,7 @@ public class AIPlayer{
                         segment[n] = board.board[i-n][j+n];
                         squares[i] = new Coord(i-n, j+n);
                     }
-                    blocks.add(createValueBlock(segment, squares, s));
+                    bmap.addBlock(createValueBlock(segment, squares, s));
                 }
             }
         }
@@ -218,10 +211,10 @@ public class AIPlayer{
             }
         }
         if(good_symbs+free_space<board.win || enemy_symb){
-            return new BlockValue(new Coord[0], 0);
+            return BlockValue.createChain(new Coord[0], 0);
         }
         System.out.println(board.win+", "+free_space);
-        return new BlockValue(squares, board.win-free_space);
+        return BlockValue.createChain(squares, board.win-free_space);
     }
     private int evaluateSegment(Symbol[] segment, Symbol s){
         boolean enemy_symb = false;
@@ -262,37 +255,5 @@ public class AIPlayer{
         }
         System.out.println(board.win+", "+free_space);
         return board.win-free_space;
-    }
-    private class BlockMap{
-
-        HashMap<Integer, HashMap<Integer, List<BlockValue>>> map;
-
-        private BlockMap(int size){
-            map = new HashMap<>();
-            for(int i=0; i<size; i++){
-                map.put(i, new HashMap<>());
-            }
-        }
-
-        void addBlock(BlockValue block){
-
-            for(Coord c: block.squares){
-                List<BlockValue> list = map.get(c.x).get(c.y);
-                boolean subset = false;
-                for(BlockValue b: list){
-
-                }
-                boolean linked = false;
-            }
-        }
-
-        boolean checkSubset(BlockValue block){
-            for(Coord c: block.squares){
-                List<BlockValue> list = map.get(c.x).get(c.y);
-                for(BlockValue b: list){
-
-                }
-            }
-        }
     }
 }
