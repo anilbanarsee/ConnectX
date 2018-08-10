@@ -1,7 +1,10 @@
 package client;
 
+import javafx.scene.canvas.GraphicsContext;
+
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class MinMaxNode {
@@ -60,14 +63,20 @@ public class MinMaxNode {
             }
         }
     }
-    public String toString(){
-        //calculate width
-        //build up from the bottom up
-
+    public void paint(int depth){
+        System.out.println(paintR(depth, 0));
     }
-    public String toStringR(String s){
-
+    public int paintR(int depth, int width){
+        if(depth==0){
+            return 1;
+        }
+        int w = 0;
+        for(MinMaxNode node: subNodes) {
+            w += node.paintR( depth-1, width+w);
+        }
+        return w;
     }
+
     public static MinMaxNode generateTestTree(int depth){
         return generateTestTreeR(depth, new MinMaxNode(null));
     }
